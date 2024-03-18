@@ -2,15 +2,62 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="./src/scss/main.scss">
-  <title>IP Address Tracker</title>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="./src/scss/main.scss">
+	<title>IP Address Tracker</title>
 </head>
 
 <body>
-  <script type="module" src="./src/js/index.js"></script>
+	<main class="tracker">
+		<section class="tracker__main">
+
+			<div class="container relative column-center">
+
+				<h1 class="tracker__title rubik-600">IP Address Tracker</h1>
+				<form class="tracker__form form" action="">
+					<input class="tracker__input form__input input rubik-400" type="text"
+						placeholder="Enter your IP address">
+					<button class="tracker__button form__button" type="button">
+						<svg class="form__button-icon" width="13" height="20" viewBox="0 0 13 20" fill="none"
+							xmlns="http://www.w3.org/2000/svg">
+							<path d="M2 2L10.5091 10.2909L2 18.5818" stroke="white" stroke-width="3" />
+						</svg>
+					</button>
+				</form>
+
+				<div class="info">
+					<h2 class="visually-hidden">Info about IP</h2>
+
+					<div class="info-block">
+						<h3 class="info-block__title rubik-600">Ip address</h3>
+						<p id="ip" class="info-block__info rubik-500">-</p>
+					</div>
+
+					<div class="info-block">
+						<h3 class="info-block__title rubik-600">Location</h3>
+						<p id="location" class="info-block__info rubik-500">-</p>
+					</div>
+
+					<div class="info-block">
+						<h3 class="info-block__title rubik-600">Timezone</h3>
+						<p id="timezone" class="info-block__info rubik-500">-</p>
+					</div>
+
+					<div class="info-block">
+						<h3 class="info-block__title rubik-600">Isp</h3>
+						<p id="isp" class="info-block__info rubik-500">-</p>
+					</div>
+
+				</div>
+			</div>
+		</section>
+
+		<section class="tracker__map"></section>
+	</main>
+
+	<script type="module" src="./src/js/index.js"></script>
 </body>
 
 </html>
