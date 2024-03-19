@@ -13,6 +13,7 @@
     "vite": "^5.1.6"
   },
   "dependencies": {
+    "@maptiler/leaflet-maptilersdk": "^2.0.0",
     "leaflet": "^1.9.4",
     "normalize.css": "^8.0.1"
   }

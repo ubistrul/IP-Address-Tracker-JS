@@ -108,19 +108,20 @@ body {
 }
 
 .info {
+    width: calc(100% - #{$container-paddings} * 2);
+    max-width: 1110px;
+    padding: 36px 32px;
+
     display: flex;
 
     position: absolute;
     bottom: -100%;
     transform: translateY(50%);
-
-    padding: 36px 32px;
+    z-index: 1;
 
     border-radius: 15px;
     background-color: $white;
-
-    width: calc(100% - #{$container-paddings} * 2);
-    max-width: 1110px;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.15);
 }
 
 .info-block {
@@ -170,6 +171,11 @@ body {
 }
 
 .tracker__map {
+}
+
+#map {
+    z-index: 0;
+    // min-height: calc(100dvh - attr);
 }
 
 @media screen and (max-width: 990px) {

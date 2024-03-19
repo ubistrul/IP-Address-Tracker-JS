@@ -1,12 +1,20 @@
 import { utils } from './utils';
+// import 'leaflet/dist/leaflet.css';
+// import L from 'leaflet';
+import { map, createMap, setMapView } from './map';
 
+//? Geo.ipify
 const IP_APIKEY = `at_NUCWwHBl2qoJCSb7WwHnW270ooBzq`;
-
 const IP_URL_MAIN = `https://geo.ipify.org/api/v2/country,city`;
 const IP_URL_APIPART = `?apiKey=`;
 const IP_URL_ENDPART = `&ipAddress=`;
 const IP_URL_FULL = IP_URL_MAIN + IP_URL_APIPART + IP_APIKEY + IP_URL_ENDPART;
 
+//? Sections
+const firstSection = document.querySelector('.tracker__main');
+const mapSection = document.querySelector('.tracker__map');
+
+//? Text elements
 const ipEl = document.getElementById('ip');
 const locationEl = document.getElementById('location');
 const timezoneEl = document.getElementById('timezone');
@@ -19,11 +27,17 @@ const textElementsRefs = {
     isp: ispEl,
 };
 
+//? Form elements
 const trackerFormEl = document.querySelector('.tracker__form');
 const trackerInputEl = document.querySelector('.tracker__input');
 const trackerButtonEl = document.querySelector('.tracker__button');
 
-document.addEventListener('DOMContentLoaded', getData);
+document.addEventListener('DOMContentLoaded', appInit);
+
+function appInit() {
+    setMapSectionHeight(firstSection, mapSection);
+    createMap(map, mapSection);
+}
 
 function getData() {}
 
@@ -56,6 +70,7 @@ async function onSubmitHandler(event) {
     const locationStr = `${city}${genStr(country)}${genStr(postalCode)}`;
 
     displayTextTrackerData({ ip, location: locationStr, timezone: timezoneStr, isp });
+    setMapView(map, lat, lng, 10);
 }
 
 trackerFormEl.addEventListener('submit', onSubmitHandler);
@@ -86,3 +101,14 @@ async function fetchData(url) {
 
     return data;
 }
+
+function setMapSectionHeight(firstSection, mapSection) {
+    if (!firstSection || !mapSection) {
+        return;
+    }
+
+    const firstSectionHeight = firstSection.clientHeight;
+    mapSection.style.minHeight = `calc(100dvh - (${firstSectionHeight}px))`;
+}
+
+// const map = L.map(mapEl).setView([51.505, -0.09], 1);
