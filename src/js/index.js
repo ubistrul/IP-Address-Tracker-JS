@@ -1,7 +1,8 @@
 import { utils } from './utils';
-// import 'leaflet/dist/leaflet.css';
-// import L from 'leaflet';
-import { map, createMap, setMapView } from './map';
+const { fetchData } = utils.network;
+const { setText } = utils.DOM;
+
+import { MapManager } from './map/main';
 
 //? Geo.ipify
 const IP_APIKEY = `at_NUCWwHBl2qoJCSb7WwHnW270ooBzq`;
@@ -9,6 +10,9 @@ const IP_URL_MAIN = `https://geo.ipify.org/api/v2/country,city`;
 const IP_URL_APIPART = `?apiKey=`;
 const IP_URL_ENDPART = `&ipAddress=`;
 const IP_URL_FULL = IP_URL_MAIN + IP_URL_APIPART + IP_APIKEY + IP_URL_ENDPART;
+
+//? Get user ip service
+const GET_USER_IP_SERVICE_URL = 'https://api.ipify.org?format=json';
 
 //? Sections
 const firstSection = document.querySelector('.tracker__main');
@@ -32,17 +36,85 @@ const trackerFormEl = document.querySelector('.tracker__form');
 const trackerInputEl = document.querySelector('.tracker__input');
 const trackerButtonEl = document.querySelector('.tracker__button');
 
+//? User data
+const userData = {
+    ip: null,
+    autoGetting: false,
+    autoGetConfirmed: false,
+};
+
+//? Map
+let map = {};
+
 document.addEventListener('DOMContentLoaded', appInit);
 
 function appInit() {
+    setUserIp(userData);
     setMapSectionHeight(firstSection, mapSection);
-    createMap(map, mapSection);
+    map = new MapManager({
+        el: mapSection,
+        initLat: 0,
+        initLng: 0,
+        initZoom: 2,
+    });
+    // map.setMapView(0, 0, 2);
 }
 
-function getData() {}
+function canWeGetYourIp() {
+    return confirm('Can we automatically set your ip?');
+}
 
-function setText(el, text) {
-    el.textContent = text;
+function saveInLocalStorage(key, value) {
+    localStorage.setItem(key, value);
+}
+
+function getLocalStorageData(key) {
+    const storageData = localStorage.getItem(key);
+    if (storageData === 'true') return true;
+    if (storageData === 'false') return false;
+    return storageData;
+}
+
+function setUserIpTrackerPreferences(userDataObj) {
+    const autoGetting = getLocalStorageData('autoGetting');
+    const autoGettingConfirmed = getLocalStorageData('autoGettingConfirmed');
+
+    if (autoGettingConfirmed === undefined || autoGettingConfirmed === null) {
+        confirmUserIpAutoget(autoGettingConfirmed);
+        setUserIpTrackerPreferences(userDataObj);
+        return;
+    }
+
+    userDataObj.autoGetting = autoGetting;
+    userDataObj.autoGetConfirmed = autoGettingConfirmed;
+}
+
+function confirmUserIpAutoget(isConfirmed) {
+    if (!isConfirmed) {
+        const isConfirm = canWeGetYourIp();
+        saveInLocalStorage('autoGettingConfirmed', true);
+        saveInLocalStorage('autoGetting', isConfirm);
+    }
+}
+
+async function setUserIp(userDataObj) {
+    setUserIpTrackerPreferences(userDataObj);
+
+    if (userDataObj.autoGetting) {
+        const data = await getUserIp(GET_USER_IP_SERVICE_URL);
+        if (data) {
+            userData.ip = data.ip;
+            trackerInputEl.value = userData.ip;
+        }
+    }
+}
+
+async function getUserIp(url) {
+    try {
+        return await fetchData(url);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 trackerInputEl.addEventListener('keyup', (event) => {
@@ -70,12 +142,11 @@ async function onSubmitHandler(event) {
     const locationStr = `${city}${genStr(country)}${genStr(postalCode)}`;
 
     displayTextTrackerData({ ip, location: locationStr, timezone: timezoneStr, isp });
-    setMapView(map, lat, lng, 10);
+    map.setMapView(lat, lng, 15);
+    map.addMarker(lat, lng, 15);
 }
 
 trackerFormEl.addEventListener('submit', onSubmitHandler);
-
-console.log(utils);
 
 function displayTextTrackerData(data) {
     Object.keys(data).forEach((key) => {
@@ -93,13 +164,6 @@ function getTrackerInfo(ip) {
     return fetchData(IP_URL_FULL + ip)
         .then((data) => data)
         .catch((error) => console.log(error));
-}
-
-async function fetchData(url) {
-    const res = await fetch(url);
-    const data = await res.json();
-
-    return data;
 }
 
 function setMapSectionHeight(firstSection, mapSection) {
