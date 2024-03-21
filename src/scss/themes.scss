@@ -1,0 +1,26 @@
+// Default theme
+@import './vars.scss';
+@import './mixins.scss';
+
+$theme-map-light: (
+    $--theme-primary: #fff,
+    $--theme-secondary: #969696,
+    $--theme-surface: #fff,
+    $--theme-surface-secondary: #fff,
+    $--theme-background: #fafafa,
+    $--theme-on-primary: #000,
+    $--theme-on-secondary: #2b2b2b,
+    $--theme-on-surface: #000,
+    $--theme-on-surface-secondary: #000,
+);
+
+// Override the default light theme
+$theme-map-dark: (
+    $--theme-primary: #f34c83,
+    $--theme-secondary: #c298dc,
+    $--theme-surface: #161616,
+    $--theme-background: #1b1918,
+    $--theme-on-primary: #443e41,
+    $--theme-on-secondary: #000,
+    $--theme-on-surface: #f5f1f2,
+);

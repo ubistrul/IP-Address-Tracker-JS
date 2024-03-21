@@ -1,10 +1,15 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '@maptiler/leaflet-maptilersdk';
+import icon from '../../../public/images/icon-location.svg';
 
 export class MapManager {
-    constructor({ el, initLat = 0, initLng = 0, initZoom = 2 }, key = 'CUrY72wTSLYP6IjMX81I') {
-        if (!el) throw new Error(`${el} is not current HTML element`);
+    constructor(
+        { el, initLat = 0, initLng = 0, initZoom = 2 },
+        { iconUrl, iconSize },
+        key = 'CUrY72wTSLYP6IjMX81I'
+    ) {
+        if (!el) throw new Error(`${el} is not currect HTML element`);
 
         this.map = L.map(el, {
             center: L.latLng(initLat, initLng),
@@ -14,6 +19,11 @@ export class MapManager {
         const mtLayer = new L.MaptilerLayer({
             apiKey: key,
         }).addTo(this.map);
+
+        this.myIcon = L.icon({
+            iconUrl,
+            iconSize,
+        });
     }
 
     setMapView(lat, lng, zoom) {
@@ -25,6 +35,11 @@ export class MapManager {
     addMarker(lat, lng) {
         if (!this.map) throw new Error('Map has not been initialized. Call createMap first.');
 
-        L.marker([lat, lng]).addTo(this.map);
+        L.marker([lat, lng], { icon: this.myIcon }).addTo(this.map);
+    }
+
+    setMapViewWithMarker(lat, lng, zoom) {
+        this.setMapView(lat, lng, zoom);
+        this.addMarker(lat, lng);
     }
 }

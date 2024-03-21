@@ -3,6 +3,16 @@ $very-dark-gray: #2b2b2b;
 $white: #fff;
 $black: #000;
 
+$--theme-primary: --theme-primary;
+$--theme-secondary: --theme-secondary;
+$--theme-surface: --theme-surface;
+$--theme-surface-secondary: --theme-surface-secondary;
+$--theme-background: --theme-background;
+$--theme-on-primary: --theme-on-primary;
+$--theme-on-secondary: --theme-on-secondary;
+$--theme-on-surface: --theme-on-surface;
+$--theme-on-surface-secondary: --theme-on-surface-secondary;
+
 //? Container
 $container-paddings: 16px;
 $container-width: calc(1440px + #{$container-paddings} * 2);
