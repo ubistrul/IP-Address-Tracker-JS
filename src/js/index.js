@@ -1,9 +1,10 @@
+import { userData, setUserIp } from './userSettings/userSettings';
+
 //? Utils
 import { utils } from './utils';
 const { fetchData } = utils.Network;
-const { setText } = utils.DOM;
+const { setElementText } = utils.DOM;
 const { toggleTheme, initTheme } = utils.Theme;
-const { getLocalStorageData, saveInLocalStorage } = utils.LocalStorage;
 
 //? Map preferences
 import { MapManager } from './map';
@@ -18,9 +19,6 @@ const IP_URL_APIPART = `?apiKey=`;
 const IP_URL_ENDPART = `&ipAddress=`;
 const IP_URL_FULL = IP_URL_MAIN + IP_URL_APIPART + IP_APIKEY + IP_URL_ENDPART;
 
-//? Get user ip service
-const GET_USER_IP_SERVICE_URL = 'https://api.ipify.org?format=json';
-
 //? Sections
 const firstSection = document.querySelector('.tracker__main');
 const mapSection = document.querySelector('.tracker__map');
@@ -31,7 +29,7 @@ const locationEl = document.getElementById('location');
 const timezoneEl = document.getElementById('timezone');
 const ispEl = document.getElementById('isp');
 
-const textElementsRefs = {
+const textElementRefs = {
     ip: ipEl,
     location: locationEl,
     timezone: timezoneEl,
@@ -43,29 +41,22 @@ const trackerFormEl = document.querySelector('.tracker__form');
 const trackerInputEl = document.querySelector('.tracker__input');
 const trackerButtonEl = document.querySelector('.tracker__button');
 
-//? User data
-const userData = {
-    ip: null,
-    autoGetting: false,
-    autoGetConfirmed: false,
-};
-
 //? Theme
 const themeSwitcherEl = document.getElementById('theme-switcher');
 themeSwitcherEl.addEventListener('click', () => {
-    console.log('log');
-    console.log();
     toggleTheme();
-    // toggleTheme();
 });
 
 //? EVENTS
-
 document.addEventListener('DOMContentLoaded', appInit);
+
+trackerInputEl.addEventListener('keyup', keyUpEnterHandler);
+
+trackerFormEl.addEventListener('submit', onSubmitHandler);
 
 function appInit() {
     initTheme();
-    setUserIp(userData);
+    setUserIp(userData, trackerInputEl);
     setMapSectionHeight(firstSection, mapSection);
     map = new MapManager(
         {
@@ -78,8 +69,6 @@ function appInit() {
     );
 }
 
-trackerInputEl.addEventListener('keyup', keyUpEnterHandler);
-
 function keyUpEnterHandler(event) {
     const ip = trackerInputEl.value;
 
@@ -87,8 +76,6 @@ function keyUpEnterHandler(event) {
         getTrackerInfo(ip);
     }
 }
-
-trackerFormEl.addEventListener('submit', onSubmitHandler);
 
 async function onSubmitHandler(event) {
     event.preventDefault();
@@ -110,6 +97,24 @@ async function onSubmitHandler(event) {
     map.setMapViewWithMarker(lat, lng, 15);
 }
 
+function displayTextTrackerData(data) {
+    Object.keys(data).forEach((key) => {
+        const el = textElementRefs[key];
+        setElementText(el, data[key] || '-');
+    });
+}
+
+function getTrackerInfo(ip) {
+    if (!utils.ipValidator(ip)) {
+        alert('IP validate error');
+        return;
+    }
+
+    return fetchData(IP_URL_FULL + ip)
+        .then((data) => data)
+        .catch((error) => console.log(error));
+}
+
 window.addEventListener('resize', () => {
     if (window.innerWidth > 559) {
         setMapSectionHeight(firstSection, mapSection);
@@ -123,72 +128,4 @@ function setMapSectionHeight(firstSection, mapSection) {
 
     const firstSectionHeight = firstSection.clientHeight;
     mapSection.style.minHeight = `calc(100dvh - (${firstSectionHeight}px))`;
-}
-
-//? IP autogetting
-
-function canWeGetYourIp() {
-    return confirm('Can we automatically set your ip?');
-}
-
-function setUserIpTrackerPreferences(userDataObj) {
-    const autoGetting = getLocalStorageData('autoGetting');
-    const autoGettingConfirmed = getLocalStorageData('autoGettingConfirmed');
-
-    if (autoGettingConfirmed === undefined || autoGettingConfirmed === null) {
-        confirmUserIpAutogetting(autoGettingConfirmed);
-        setUserIpTrackerPreferences(userDataObj);
-        return;
-    }
-
-    userDataObj.autoGetting = autoGetting;
-    userDataObj.autoGetConfirmed = autoGettingConfirmed;
-}
-
-function confirmUserIpAutogetting(isConfirmed) {
-    if (!isConfirmed) {
-        const isConfirm = canWeGetYourIp();
-        saveInLocalStorage('autoGettingConfirmed', true);
-        saveInLocalStorage('autoGetting', isConfirm);
-    }
-}
-
-//? User ip getter and setter
-
-async function setUserIp(userDataObj) {
-    setUserIpTrackerPreferences(userDataObj);
-
-    if (userDataObj.autoGetting) {
-        const data = await getUserIp(GET_USER_IP_SERVICE_URL);
-        if (data) {
-            userData.ip = data.ip;
-            trackerInputEl.value = userData.ip;
-        }
-    }
-}
-
-async function getUserIp(url) {
-    try {
-        return await fetchData(url);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-function displayTextTrackerData(data) {
-    Object.keys(data).forEach((key) => {
-        const el = textElementsRefs[key];
-        setText(el, data[key] || '-');
-    });
-}
-
-function getTrackerInfo(ip) {
-    if (!utils.ipValidator(ip)) {
-        alert('IP validate error');
-        return;
-    }
-
-    return fetchData(IP_URL_FULL + ip)
-        .then((data) => data)
-        .catch((error) => console.log(error));
 }

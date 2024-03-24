@@ -1,5 +1,5 @@
-function setText(el, text) {
+function setElementText(el, text) {
     el.textContent = text;
 }
 
-export { setText };
+export { setElementText };

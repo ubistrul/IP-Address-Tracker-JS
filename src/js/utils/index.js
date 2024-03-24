@@ -1,5 +1,5 @@
 import ipValidator from './validators/ipValidator';
-import { setText } from './DOM/DOM';
+import { setElementText } from './DOM/DOM';
 import { fetchData } from './Network/network';
 import { toggleTheme, initTheme } from './Theme';
 import { getLocalStorageData, saveInLocalStorage } from './LocalStorage';
@@ -9,7 +9,7 @@ const utils = {
     LocalStorage: { getLocalStorageData, saveInLocalStorage },
     Theme: { toggleTheme, initTheme },
     DOM: {
-        setText,
+        setElementText,
     },
     Network: {
         fetchData,
