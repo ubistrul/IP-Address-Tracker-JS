@@ -110,6 +110,21 @@ async function onSubmitHandler(event) {
     map.setMapViewWithMarker(lat, lng, 15);
 }
 
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 559) {
+        setMapSectionHeight(firstSection, mapSection);
+    }
+});
+
+function setMapSectionHeight(firstSection, mapSection) {
+    if (!firstSection || !mapSection) {
+        return;
+    }
+
+    const firstSectionHeight = firstSection.clientHeight;
+    mapSection.style.minHeight = `calc(100dvh - (${firstSectionHeight}px))`;
+}
+
 //? IP autogetting
 
 function canWeGetYourIp() {
@@ -121,7 +136,7 @@ function setUserIpTrackerPreferences(userDataObj) {
     const autoGettingConfirmed = getLocalStorageData('autoGettingConfirmed');
 
     if (autoGettingConfirmed === undefined || autoGettingConfirmed === null) {
-        confirmUserIpAutoget(autoGettingConfirmed);
+        confirmUserIpAutogetting(autoGettingConfirmed);
         setUserIpTrackerPreferences(userDataObj);
         return;
     }
@@ -130,7 +145,7 @@ function setUserIpTrackerPreferences(userDataObj) {
     userDataObj.autoGetConfirmed = autoGettingConfirmed;
 }
 
-function confirmUserIpAutoget(isConfirmed) {
+function confirmUserIpAutogetting(isConfirmed) {
     if (!isConfirmed) {
         const isConfirm = canWeGetYourIp();
         saveInLocalStorage('autoGettingConfirmed', true);
@@ -176,13 +191,4 @@ function getTrackerInfo(ip) {
     return fetchData(IP_URL_FULL + ip)
         .then((data) => data)
         .catch((error) => console.log(error));
-}
-
-function setMapSectionHeight(firstSection, mapSection) {
-    if (!firstSection || !mapSection) {
-        return;
-    }
-
-    const firstSectionHeight = firstSection.clientHeight;
-    mapSection.style.minHeight = `calc(100dvh - (${firstSectionHeight}px))`;
 }

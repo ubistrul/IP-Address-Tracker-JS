@@ -1,11 +1,10 @@
 @import 'normalize.css';
-// @import './reset.scss';
 @import './vars.scss';
 @import './fonts.scss';
 @import './container.scss';
 @import './utils.scss';
 @import './themes.scss';
-//
+
 @import './mixins.scss';
 
 html[data-theme='light'] {
@@ -38,8 +37,6 @@ body {
     font-weight: 600;
 }
 
-.tracker {
-}
 .tracker__main {
     padding: 30px 0 128px 0;
     background-image: url('./../../public/images/pattern-bg@2x.png');
@@ -47,27 +44,18 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
 }
-.container {
-}
+
 .tracker__title {
     margin: 0 0 28px;
     font-weight: 600;
     font-size: 31px;
     color: $white;
 }
-.rubik-600 {
-}
 
 .main-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-.tracker__form {
-}
-.tracker__input {
-}
-.rubik-400 {
 }
 
 .form {
@@ -110,12 +98,6 @@ body {
             opacity: 0.8;
         }
     }
-
-    &__button-icon {
-    }
-}
-
-.tracker__button {
 }
 
 .info {
@@ -182,15 +164,8 @@ body {
     }
 }
 
-.tracker__map {
-}
-
 #map {
     z-index: 0;
-    // min-height: calc(100dvh - attr);
-}
-
-@media screen and (max-width: 990px) {
 }
 
 #theme-switcher {
@@ -207,4 +182,71 @@ body {
     align-items: center;
     border: 0;
     cursor: pointer;
+}
+
+@media screen and (max-width: 1200px) {
+    .info {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(50%, 1fr));
+        gap: 32px 24px;
+
+        max-width: 899px;
+
+        & .info-block {
+            padding-inline: 0;
+            padding-right: 32px;
+
+            &:not(:last-of-type) {
+                &::after {
+                    width: 0px;
+                }
+            }
+
+            &:nth-child(2n) {
+                &::after {
+                    width: 1px;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 989px) {
+    .tracker__main {
+        padding-block: 30px;
+    }
+
+    .tracker__form {
+        margin-bottom: 28px;
+    }
+
+    .info {
+        width: 100%;
+        position: relative;
+        transform: translateY(0);
+    }
+}
+
+@media screen and (max-width: 559px) {
+    .info {
+        --row-gap: 36px;
+        grid-template-columns: repeat(1, 1fr);
+        row-gap: var(--row-gap);
+
+        & .info-block {
+            &::after {
+                width: 0px;
+            }
+
+            &:not(:last-of-type) {
+                &::after {
+                    inset-inline: 0;
+                    inset-block: unset;
+                    bottom: calc(0px - var(--row-gap) / 2);
+                    width: 100%;
+                    height: 1px;
+                }
+            }
+        }
+    }
 }
